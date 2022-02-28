@@ -1,29 +1,18 @@
 import * as React from 'react';
 import type { NextPage } from 'next';
 import axios from 'axios';
-import { useScript } from './hooks';
-import { callKakao } from './kakao';
+//import { callKakao } from './kakao';
 import Script from 'next/script'
 
-const KakaoScript = () => {
-  return (
-    <Script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=6528e7f75d2844bbd51073a4861745ad&libraries=services,clusterer,drawing" />
-  )
-}
+const kakaoKey = "6528e7f75d2844bbd51073a4861745ad";
 
 const Map: NextPage = () => {
   const [data, setData] = React.useState([]);
+  const [loading, setLoading] = React.useState<boolean>(false);
   const [searchText, setSearchText] = React.useState('');
   const [queryText, setQueryText] = React.useState('');
-  const [latitude, setLatitude] = React.useState(33);
-  const [longitude, setLongitude] = React.useState(125);
-  const [radius, setRadius] = React.useState(20000);
-  const [coordinate, setCoordinate] = React.useState({ latitude: 33, longitude: 125, radius: 20000 });
-  const [kakao, setKakao] = React.useState(null);
-
-  //const mapStatus = useScript("//dapi.kakao.com/v2/maps/sdk.js?appkey=6528e7f75d2844bbd51073a4861745ad"); 
-  //const libraryStatus = useScript("//dapi.kakao.com/v2/maps/sdk.js?appkey=6528e7f75d2844bbd51073a4861745ad&libraries=services,clusterer,drawing");
-
+  const [latitude, setLatitude] = React.useState(37.353644);
+  const [longitude, setLongitude] = React.useState(127.105032);
   const getStoreDataByName = async (queryText: string) => {
     const query = encodeURIComponent(queryText);
     if (query && query !== '') {
@@ -37,14 +26,6 @@ const Map: NextPage = () => {
       setData(response.data.documents);
     }
   }
-  const getStoreDataByCoordinate = async (latitude: number, longitude: number, radius: number) => {
-    //const check = (latitude, longitude) => {return true}; //위경도 체크?
-    const check = true;
-    if (check) {
-      console.log('latitude: ' + latitude + ', longitude: ' + longitude + ', radius :' + radius);
-    }
-  }
-
 
   const changeSearchText = (e: any) => {
     setSearchText(e.target.value);
@@ -59,43 +40,38 @@ const Map: NextPage = () => {
     getStoreDataByName(queryText);
   }, [queryText]);
 
-  const changeLatitude = (e: any) => {
-    setLatitude(e.target.value);
+  const moveMap = (e: any) => {
+    console.log(e.target.value);
+    if (e.target.value == 1) {
+      setLatitude(37.353644);
+      setLongitude(127.105032);
+    }
+    if (e.target.value == 2) {
+      setLatitude(37.350000);
+      setLongitude(127.109000);
+    }    
   };
-  const changeLongitude = (e: any) => {
-    setLongitude(e.target.value);
-  };
-  const changeRadius = (e: any) => {
-    setRadius(e.target.value);
-  };
-  const updataCoordinate = () => {
-    setCoordinate({ latitude: latitude, longitude: longitude, radius: radius });
-  };
-  React.useEffect(() => {
-    getStoreDataByCoordinate(coordinate.latitude, coordinate.longitude, coordinate.radius);
-  }, [coordinate]);
-  /*
-  React.useEffect(() => {
-    const temp = callKakao();
-    console.log(temp);
-    setKakao(temp);
-    
-    //setKakao(window.kakao ? window.kakao : null);
-    //const kakao = callKakao();
-    //const kakao = window.kakao;
-  });
-  */
-  //<KakaoScript />
-  //<KakaoMap kakao={kakao} />
+
   return (
     <div>
+      <Script
+        type="text/javascript"
+        src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoKey}`}
+        strategy='beforeInteractive'
+        onLoad={() => { setLoading(true); console.log(loading); }}
+      />
+      <Script
+        type="text/javascript"
+        src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoKey}&autoload=false&libraries=services,clusterer,drawing`}
+        strategy='beforeInteractive'
+        onLoad={() => { setLoading(true); console.log(loading); }}
+      />
       <h1>this is Map</h1>
       <input type='text' value={searchText} onChange={changeSearchText} onKeyPress={onKeyPress}></input>
       <button type='button' onClick={updateQueryText}>검색</button>
-      <input type='number' value={latitude} onChange={changeLatitude} ></input>
-      <input type='number' value={longitude} onChange={changeLongitude} ></input>
-      <input type='number' value={radius} onChange={changeRadius} ></input>
-      <button type='button' onClick={updataCoordinate}>검색</button>
+      <button type='button' value={1} onClick={moveMap}>티맥스 타워 이동</button>
+      <button type='button' value={2} onClick={moveMap}>미금역 이동</button>
+      <KakaoMap latitude={latitude} longitude={longitude} storeData={data} />
 
       <div>{data.map((d: any, i: number) => {
         return <StoreCard
@@ -113,33 +89,80 @@ const Map: NextPage = () => {
     </div>
   );
 };
-
-const KakaoMap = (kakao: any) => {
-  const [mapOpen, setMapOpen] = React.useState(false);
-  const lat = 33;
-  const lon = 125;
+const KakaoMap: React.FC<KakaoMapProps> = ({
+  latitude = 37.353644,
+  longitude = 127.105032,
+  storeData = [],
+}) => {
   const mapRef = React.useRef(null);
   React.useEffect(() => {
-    if (mapOpen) {
-      //const kakao = callKakao();
-      //const kakao = window.kakao;
+
+    (window as any).kakao.maps.load(function () {
+      // v3가 모두 로드된 후, 이 콜백 함수가 실행됩니다.
+
       const options = {
-        center: new kakao.maps.LatLng(lat, lon),
+        center: new (window as any).kakao.maps.LatLng(latitude, longitude),
         level: 3
       };
-      const map = new kakao.maps.Map(mapRef.current, options);
-      console.log('After make map');
-    }
-  }, [mapOpen]);
+      const map = new (window as any).kakao.maps.Map(mapRef.current, options);
+
+      map.relayout();
+      storeData.map((data) => {
+
+        let storeCoord = new (window as any).kakao.maps.LatLng(data.y, data.x);
+        let storeMarker = new (window as any).kakao.maps.Marker({
+          map: map,
+          position: storeCoord
+        });
+        let storeInfoWindow = new (window as any).kakao.maps.InfoWindow({
+          content: '<div style="width:150px;text-align:center;padding:6px 0;">' + data.road_address_name + '</div>'
+        });
+        storeInfoWindow.open(map, storeMarker);
+        /*
+        const geocoder = new (window as any).kakao.maps.services.Geocoder();
+        geocoder.addressSearch(data.road_address_name, function (result: any, status: any) {
+
+          // 정상적으로 검색이 완료됐으면 
+          if (status === (window as any).kakao.maps.services.Status.OK) {
+
+            var coords = new (window as any).kakao.maps.LatLng(result[0].y, result[0].x);
+
+            // 결과값으로 받은 위치를 마커로 표시합니다
+            var marker = new (window as any).kakao.maps.Marker({
+              map: map,
+              position: coords
+            });
+
+            // 인포윈도우로 장소에 대한 설명을 표시합니다
+            var infowindow = new (window as any).kakao.maps.InfoWindow({
+              content: '<div style="width:150px;text-align:center;padding:6px 0;">' + data.road_address_name + '</div>'
+            });
+            infowindow.open(map, marker);
+
+            // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
+            //map.setCenter(new (window as any).kakao.maps.LatLng(latitude, longitude));
+          }
+        });
+        */
+        map.setCenter(new (window as any).kakao.maps.LatLng(latitude, longitude));
+      });
+
+    });
+
+
+  }, [latitude, longitude, storeData]);
   return (
     <div>
       <h1>Kakao Map</h1>
-      <button onClick={() => setMapOpen(!mapOpen)}>{mapOpen ? 'close' : 'open'}</button>
-      <div ref={mapRef}></div>
+      <div ref={mapRef} style={{ width: '800px', height: '600px' }}></div>
     </div>
   );
 }
-
+type KakaoMapProps = {
+  latitude: number,
+  longitude: number,
+  storeData?: any[];
+};
 
 const StoreCard: React.FC<StoreCardProps> = ({
   categoryGroupName,

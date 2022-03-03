@@ -5,6 +5,7 @@ import Script from 'next/script'
 import { tempData1, tempData2 } from './tempData';
 
 const kakaoKey = "6528e7f75d2844bbd51073a4861745ad";
+const kakaoKeyAuth = "KakaoAK e1be8cde4e50ac11f4d643a0b0c38bbc";
 
 const Map: NextPage = () => {
   const [data, setData] = React.useState<any[]>([]);
@@ -19,11 +20,21 @@ const Map: NextPage = () => {
       //현재는 카카오 api로 보내는 중
       const response = await axios.get(`https://dapi.kakao.com/v2/local/search/keyword.json?query=${query}`, {
         headers: {
-          "Authorization": "KakaoAK e1be8cde4e50ac11f4d643a0b0c38bbc"
+          "Authorization": kakaoKeyAuth
         }
       });
       setData(response.data.documents);
     }
+  }
+  const getStoreDatafromServer = async () => {
+
+    //테스트 서버 콜    
+    const response = await axios.get(`http://localhost:8000/matzips/`, {
+      headers: {
+        "Authorization": kakaoKeyAuth
+      }
+    });
+    setData(response.data);
   }
 
   const changeSearchText = (e: any) => {
@@ -40,12 +51,12 @@ const Map: NextPage = () => {
   }, [queryText]);
 
   const moveMap = (e: any) => {
-    console.log(e.target.value);
     if (e.target.value == 1) {
       setLatitude(37.353644);
       setLongitude(127.105032);
-      setData(tempData1);
+      //setData(tempData1);
       //getStoreDataByName('티맥스 타워');
+      getStoreDatafromServer();
     }
     if (e.target.value == 2) {
       setLatitude(37.350000);
@@ -63,11 +74,11 @@ const Map: NextPage = () => {
         strategy='beforeInteractive'
       />
       <h1>this is Map</h1>
-      
-      <button type='button' value={1} onClick={moveMap}>티맥스 타워 이동</button>
-      <button type='button' value={2} onClick={moveMap}>미금역 이동</button>
+
+      <button type='button' value={1} onClick={moveMap}>티맥스 타워</button>
+      <button type='button' value={2} onClick={moveMap}>미금역</button>
       <input type='text' value={searchText} onChange={changeSearchText} onKeyPress={onKeyPress}></input>
-      <button type='button' onClick={updateQueryText}>카카오 검색</button>      
+      <button type='button' onClick={updateQueryText}>카카오 검색</button>
       <KakaoMap latitude={latitude} longitude={longitude} storeData={data} />
 
       <div style={{ width: '100%', display: 'flex', flexWrap: 'wrap' }}>
@@ -120,8 +131,7 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
   }, [latitude, longitude, storeData]);
   return (
     <div>
-      <h1>Kakao Map</h1>
-      <div ref={mapRef} style={{ width: '800px', height: '600px' }}></div>
+      <div ref={mapRef} style={{ width: '800px', height: '600px', margin: '10px' }}></div>
     </div>
   );
 }

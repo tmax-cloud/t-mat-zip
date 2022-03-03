@@ -3,6 +3,8 @@ import type { NextPage } from 'next';
 import axios from 'axios';
 import Script from 'next/script'
 import { tempData1, tempData2 } from './tempData';
+import KakaoMap from '../components/KakaoMap';
+import StoreCard from '../components/StoreCard';
 
 const kakaoKey = "6528e7f75d2844bbd51073a4861745ad";
 const kakaoKeyAuth = "KakaoAK e1be8cde4e50ac11f4d643a0b0c38bbc";
@@ -29,11 +31,7 @@ const Map: NextPage = () => {
   const getStoreDatafromServer = async () => {
 
     //테스트 서버 콜    
-    const response = await axios.get(`http://localhost:8000/matzips/`, {
-      headers: {
-        "Authorization": kakaoKeyAuth
-      }
-    });
+    const response = await axios.get('http://localhost:8000/matzips/');
     setData(response.data);
   }
 
@@ -97,79 +95,6 @@ const Map: NextPage = () => {
       </div>
     </div>
   );
-};
-
-const KakaoMap: React.FC<KakaoMapProps> = ({
-  latitude = 37.353644,
-  longitude = 127.105032,
-  storeData = [],
-}) => {
-  const mapRef = React.useRef(null);
-  React.useEffect(() => {
-    (window as any).kakao.maps.load(function () {
-      const options = {
-        center: new (window as any).kakao.maps.LatLng(latitude, longitude),
-        level: 2
-      };
-      const map = new (window as any).kakao.maps.Map(mapRef.current, options);
-
-      map.relayout();
-      storeData.map((data) => {
-        let storeCoord = new (window as any).kakao.maps.LatLng(data.y, data.x);
-        let storeMarker = new (window as any).kakao.maps.Marker({
-          map: map,
-          position: storeCoord
-        });
-        let storeInfoWindow = new (window as any).kakao.maps.InfoWindow({
-          content: '<div style="width:150px;text-align:center;padding:6px 0;">' + data.place_name + '</div>'
-        });
-        storeInfoWindow.open(map, storeMarker);
-      });
-      map.setCenter(new (window as any).kakao.maps.LatLng(latitude, longitude));
-      console.log('latitude: ' + latitude + ' longitude: ' + longitude);
-    });
-  }, [latitude, longitude, storeData]);
-  return (
-    <div>
-      <div ref={mapRef} style={{ width: '800px', height: '600px', margin: '10px' }}></div>
-    </div>
-  );
-}
-type KakaoMapProps = {
-  latitude: number,
-  longitude: number,
-  storeData?: any[];
-};
-
-const StoreCard: React.FC<StoreCardProps> = ({
-  categoryGroupName,
-  categoryName,
-  placeName,
-  phone,
-  placeUrl,
-  addressName,
-  roadAddressName,
-}) => {
-  return (
-    <div style={{ border: '1px solid', width: '350px', height: '350px', margin: '10px' }}>
-      <h1>{placeName}</h1>
-      <p>{categoryGroupName}{'>'}{categoryName}</p>
-      <p>{phone}</p>
-      <p>{placeUrl}</p>
-      <p>{addressName}</p>
-      <p>{roadAddressName}</p>
-    </div>
-  );
-}
-
-type StoreCardProps = {
-  categoryGroupName: string,
-  categoryName: string;
-  placeName: string;
-  phone: string;
-  placeUrl: string;
-  addressName: string;
-  roadAddressName: string;
 };
 
 export default Map;

@@ -31,7 +31,7 @@ const Map: NextPage = () => {
   const getStoreDatafromServer = async () => {
 
     //테스트 서버 콜    
-    const response = await axios.get('http://localhost:8000/matzips/');
+    const response = await axios.get('http://192.168.8.105:8000/matzips/');
     setData(response.data);
   }
 

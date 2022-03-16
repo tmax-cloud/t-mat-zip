@@ -1,8 +1,7 @@
 import * as React from 'react';
 import type { NextPage } from 'next';
 import axios from 'axios';
-import Script from 'next/script'
-import { tempData1, tempData2 } from './tempData';
+import { tempData2 } from './tempData';
 import KakaoMap from '../components/KakaoMap';
 import StoreCard from '../components/StoreCard';
 
@@ -66,11 +65,6 @@ const Map: NextPage = () => {
 
   return (
     <div>
-      <Script
-        type="text/javascript"
-        src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoKey}&autoload=false&libraries=services,clusterer,drawing`}
-        strategy='beforeInteractive'
-      />
       <h1>this is Map</h1>
 
       <button type='button' value={1} onClick={moveMap}>티맥스 타워</button>

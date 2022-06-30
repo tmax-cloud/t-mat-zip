@@ -2,6 +2,7 @@ import * as React from 'react';
 
 const KakaoMap: React.FC<KakaoMapProps> = ({ latitude = 37.353644, longitude = 127.105032, storeData = [] }) => {
   const mapRef = React.useRef(null);
+  const [emptyMap, setEmptyMap] = React.useState('');
   React.useEffect(() => {
     if ((window as any).kakao) {
       (window as any).kakao.maps.load(function () {
@@ -26,11 +27,15 @@ const KakaoMap: React.FC<KakaoMapProps> = ({ latitude = 37.353644, longitude = 1
         map.setCenter(new (window as any).kakao.maps.LatLng(latitude, longitude));
         console.log('latitude: ' + latitude + ' longitude: ' + longitude);
       });
+    } else {
+      setEmptyMap('카카오맵을 로딩할 수 없었습니다.');
     }
   }, [latitude, longitude, storeData]);
   return (
     <div>
-      <div ref={mapRef} style={{ width: '800px', height: '600px', margin: '10px' }}></div>
+      <div ref={mapRef} style={{ width: '800px', height: '600px', margin: '10px' }}>
+        {emptyMap}
+      </div>
     </div>
   );
 };

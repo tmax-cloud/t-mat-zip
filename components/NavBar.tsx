@@ -17,6 +17,12 @@ export default function NavBar() {
           <Link href="/history">
             <a className={router.pathname === '/history' ? 'active' : ''}>HISTORY </a>
           </Link>
+          <Link href="/game">
+            <a className={router.pathname === '/game' ? 'active' : ''}>GAME </a>
+          </Link>
+          <Link href="/notice">
+            <a className={router.pathname === '/notice' ? 'active' : ''}>NOTICE </a>
+          </Link>
         </div>
       </nav>
 

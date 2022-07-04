@@ -1,13 +1,13 @@
 import * as React from 'react';
 import type { NextPage } from 'next';
 import axios from 'axios';
-import Script from 'next/script'
+import Script from 'next/script';
 import { tempData1, tempData2 } from './tempData';
 import KakaoMap from '../components/KakaoMap';
 import StoreCard from '../components/StoreCard';
 
-const kakaoKey = "6528e7f75d2844bbd51073a4861745ad";
-const kakaoKeyAuth = "KakaoAK e1be8cde4e50ac11f4d643a0b0c38bbc";
+const kakaoKey = '6528e7f75d2844bbd51073a4861745ad';
+const kakaoKeyAuth = 'KakaoAK e1be8cde4e50ac11f4d643a0b0c38bbc';
 
 const Map: NextPage = () => {
   const [data, setData] = React.useState<any[]>([]);
@@ -22,18 +22,17 @@ const Map: NextPage = () => {
       //현재는 카카오 api로 보내는 중
       const response = await axios.get(`https://dapi.kakao.com/v2/local/search/keyword.json?query=${query}`, {
         headers: {
-          "Authorization": kakaoKeyAuth
-        }
+          Authorization: kakaoKeyAuth,
+        },
       });
       setData(response.data.documents);
     }
-  }
+  };
   const getStoreDatafromServer = async () => {
-
-    //테스트 서버 콜    
+    //테스트 서버 콜
     const response = await axios.get('http://localhost:8000/matzips/');
     setData(response.data);
-  }
+  };
 
   const changeSearchText = (e: any) => {
     setSearchText(e.target.value);
@@ -57,8 +56,8 @@ const Map: NextPage = () => {
       getStoreDatafromServer();
     }
     if (e.target.value == 2) {
-      setLatitude(37.350000);
-      setLongitude(127.109000);
+      setLatitude(37.35);
+      setLongitude(127.109);
       setData(tempData2);
       //getStoreDataByName('미금역');
     }
@@ -66,31 +65,24 @@ const Map: NextPage = () => {
 
   return (
     <div>
-      <Script
-        type="text/javascript"
-        src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoKey}&autoload=false&libraries=services,clusterer,drawing`}
-        strategy='beforeInteractive'
-      />
+      <Script type="text/javascript" src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoKey}&autoload=false&libraries=services,clusterer,drawing`} strategy="beforeInteractive" />
       <h1>this is Map</h1>
 
-      <button type='button' value={1} onClick={moveMap}>티맥스 타워</button>
-      <button type='button' value={2} onClick={moveMap}>미금역</button>
-      <input type='text' value={searchText} onChange={changeSearchText} onKeyPress={onKeyPress}></input>
-      <button type='button' onClick={updateQueryText}>카카오 검색</button>
+      <button type="button" value={1} onClick={moveMap}>
+        티맥스 타워
+      </button>
+      <button type="button" value={2} onClick={moveMap}>
+        미금역
+      </button>
+      <input type="text" value={searchText} onChange={changeSearchText} onKeyPress={onKeyPress}></input>
+      <button type="button" onClick={updateQueryText}>
+        카카오 검색
+      </button>
       <KakaoMap latitude={latitude} longitude={longitude} storeData={data} />
 
       <div style={{ width: '100%', display: 'flex', flexWrap: 'wrap' }}>
         {data.map((d: any, i: number) => {
-          return <StoreCard
-            key={`address_name-${i}`}
-            categoryGroupName={d.category_groupName}
-            categoryName={d.category_name}
-            placeName={d.place_name}
-            phone={d.phone}
-            placeUrl={d.place_url}
-            addressName={d.address_name}
-            roadAddressName={d.road_address_name}
-          />
+          return <StoreCard key={`address_name-${i}`} categoryGroupName={d.category_groupName} categoryName={d.category_name} placeName={d.place_name} phone={d.phone} placeUrl={d.place_url} addressName={d.address_name} roadAddressName={d.road_address_name} />;
         })}
       </div>
     </div>

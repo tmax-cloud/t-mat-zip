@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import Image from 'next/image';
+import logo from '../../public/logo.png';
 import { useRouter } from 'next/router';
 
 export default function NavBar() {
@@ -7,8 +9,8 @@ export default function NavBar() {
   return (
     <div className="nav-wrapper">
       <nav>
-        <Link href="/">
-          <a className={router.pathname === '/' ? 'active' : ''}>HOME </a>
+        <Link href="/" passHref>
+          <Image className="logo" src={logo} alt="Picture of the author" />
         </Link>
         <div className="link-wrapper">
           <Link href="/map">
@@ -39,21 +41,24 @@ export default function NavBar() {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 500px;
-
+            padding: 0 200px;
             max-width: 1200xp;
           }
           a {
-            text-decoration: none;
             font-weight: bold;
             font-size: 20px;
           }
           .active {
-            color: red;
+            color: #f6681c;
           }
           .link-wrapper {
             display: flex;
             gap: 40px;
+          }
+          .logo {
+            width: 250px;
+            height: 150px;
+            top: 25px;
           }
         `}
       </style>

@@ -1,0 +1,21 @@
+.nav {
+  height: 170px;
+  width: 100%;
+}
+.ImgLink {
+  height: 100px;
+  width: 250px;
+  float: left;
+}
+.linkList{
+  padding-top: 30px;
+ margin-left: 1300px;
+}
+.linkWrapper{
+  font-size: 25px;
+  font-weight: bold;
+  width: 100%;
+}
+.active {
+  color :#fb9b44;
+}

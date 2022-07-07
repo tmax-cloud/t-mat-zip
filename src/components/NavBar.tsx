@@ -8,6 +8,10 @@ export default function NavBar() {
   //location에 관련된 데이터를 알 수 있음.
   return (
     <div>
+      <nav className="floating-menu">
+        <h3> Search</h3>
+        floating-menu : 검색창
+      </nav>
       <nav className={navbar.nav}>
         <div className={navbar.linkWrapper}>
           <div className={navbar.ImgLink}>

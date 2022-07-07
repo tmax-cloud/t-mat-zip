@@ -7,7 +7,23 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
   background-color: #fdefe7;
 }
-
+.floating-menu {
+  font-family: sans-serif;
+  border: 3px solid #f17e1f;
+  padding: 5px;
+  width: 250px;
+  z-index: 100;
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  border-radius: 3%;
+}
+.floating-menu h3 {
+  font-size: 0.9em;
+  display: block;
+  margin: 0 0.5em;
+  color: rgb(105, 99, 90);
+}
 a {
   color: inherit;
   text-decoration: none;
